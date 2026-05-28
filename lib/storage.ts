@@ -1,36 +1,65 @@
-import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
-import { storage } from './firebase';
+import { supabase } from './supabase';
 
 export async function uploadDocument(
   customerId: string,
   file: File,
   onProgress?: (pct: number) => void
 ): Promise<string> {
-  const path = `documents/${customerId}/${Date.now()}_${file.name}`;
-  const storageRef = ref(storage, path);
-  const task = uploadBytesResumable(storageRef, file);
-
-  return new Promise((resolve, reject) => {
-    task.on(
-      'state_changed',
-      (snap) => {
-        const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-        onProgress?.(pct);
+  const path = `${customerId}/${Date.now()}_${file.name}`;
+  
+  const { data, error } = await supabase.storage
+    .from('documents')
+    .upload(path, file, {
+      cacheControl: '3600',
+      upsert: false,
+      // @ts-ignore - support older/newer types for onUploadProgress if any
+      onUploadProgress: (progress) => {
+        if (progress.total) {
+          const pct = Math.round((progress.loaded / progress.total) * 100);
+          onProgress?.(pct);
+        }
       },
-      reject,
-      async () => {
-        const url = await getDownloadURL(task.snapshot.ref);
-        resolve(url);
-      }
-    );
-  });
+    });
+
+  if (error) throw error;
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('documents')
+    .getPublicUrl(path);
+
+  return publicUrl;
 }
 
 export async function deleteStorageFile(fileUrl: string): Promise<void> {
   try {
-    const fileRef = ref(storage, fileUrl);
-    await deleteObject(fileRef);
+    const bucketMarker = '/documents/';
+    const index = fileUrl.indexOf(bucketMarker);
+    if (index === -1) return;
+    const path = decodeURIComponent(fileUrl.substring(index + bucketMarker.length));
+
+    await supabase.storage.from('documents').remove([path]);
   } catch {
     // If file doesn't exist, silently ignore
+  }
+}
+
+export async function getSignedViewUrl(fileUrl: string): Promise<string> {
+  try {
+    const bucketMarker = '/documents/';
+    const index = fileUrl.indexOf(bucketMarker);
+    if (index === -1) return fileUrl;
+    const path = decodeURIComponent(fileUrl.substring(index + bucketMarker.length));
+
+    const { data, error } = await supabase.storage
+      .from('documents')
+      .createSignedUrl(path, 300); // 5 minutes expiry
+
+    if (error || !data) {
+      console.warn('Failed to create signed URL, falling back to public URL:', error);
+      return fileUrl;
+    }
+    return data.signedUrl;
+  } catch {
+    return fileUrl;
   }
 }

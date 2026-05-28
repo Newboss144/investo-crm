@@ -2,17 +2,17 @@ import Papa from 'papaparse';
 import type { Customer, CSVCustomerRow } from '@/types';
 
 export function exportCustomersToCSV(customers: Customer[]): void {
-  const rows: CSVCustomerRow[] = customers.map((c) => ({
-    name: c.name,
-    phone: c.phone,
-    email: c.email,
-    address: c.address,
-    notes: c.notes,
-  }));
+  const data = customers.map((c) => [
+    c.name || '',
+    c.phone || '',
+    c.email || '',
+    c.address || '',
+    c.notes || '',
+  ]);
 
-  const csv = Papa.unparse(rows, {
-    header: true,
-    columns: ['name', 'phone', 'email', 'address', 'notes'],
+  const csv = Papa.unparse({
+    fields: ['name', 'phone', 'email', 'address', 'notes'],
+    data,
   });
 
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
