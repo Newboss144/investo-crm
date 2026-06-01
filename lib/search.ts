@@ -20,7 +20,6 @@ export async function searchCustomers(queryText: string, agentId: string) {
       .select(`
         id,
         policy_no,
-        provider,
         type,
         customers!inner (
           id,

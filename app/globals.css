@@ -136,3 +136,42 @@ body {
   display: inline-flex;
   align-items: center;
 }
+
+/* ─── Matured Status Badge ───────────────────────────────────── */
+.status-matured {
+  background-color: rgba(168, 85, 247, 0.1);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ─── Scrollbar Hide (for horizontal scroll on mobile) ──────── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Mobile safe area ──────────────────────────────────────── */
+@supports (padding: env(safe-area-inset-bottom)) {
+  main {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* ─── Touch-friendly tap targets ────────────────────────────── */
+@media (max-width: 1023px) {
+  button, a, select, input {
+    min-height: 44px;
+  }
+  select {
+    font-size: 16px; /* prevents iOS zoom on focus */
+  }
+}

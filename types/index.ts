@@ -23,18 +23,23 @@ export interface Customer {
 }
 
 export type PolicyType = 'lic' | 'health' | 'general' | 'mutual_fund';
-export type PolicyStatus = 'active' | 'expired' | 'lapsed' | 'pending';
+export type PolicyStatus = 'active' | 'lapsed' | 'matured' | 'pending';
+export type ModeOfPayment = 'yearly' | 'half_yearly' | 'quarterly' | 'monthly';
 
 export interface Policy {
   id: string;
   customerId: string;
   type: PolicyType;
   policyNo: string;
-  provider: string;
   premium: number;
-  investmentValue: number;
+  sumAssured: number;         // Sum Assured for Health & General Insurance
+  investmentValue: number;    // Investment Value for Mutual Fund
   status: PolicyStatus;
-  maturityDate: string; // ISO date string
+  maturityDate: string;       // ISO date string – LIC only
+  doc: string;                // Date of Commencement – ISO date string
+  planTerm: string;           // e.g. "856-15-26" (planNo-PPT-term)
+  modeOfPayment: ModeOfPayment;
+  isECS: boolean;             // Auto-Debit / ECS flag
   createdAt: Date;
   updatedAt: Date;
 }

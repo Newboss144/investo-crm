@@ -131,12 +131,12 @@ export default function CustomerProfilePage() {
       </motion.div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-slate-900 rounded-xl p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-slate-900 rounded-xl p-1 w-full sm:w-fit overflow-x-auto scrollbar-hide">
         {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`px-5 py-2 rounded-lg text-sm font-medium transition-all flex-shrink-0 ${
               activeTab === tab
                 ? 'bg-blue-600 text-white shadow'
                 : 'text-slate-400 hover:text-white'
@@ -189,7 +189,14 @@ export default function CustomerProfilePage() {
             ) : (
               <div className="grid gap-3">
                 {policies.map((p) => (
-                  <PolicyCard key={p.id} policy={p} customerId={id} onDeleted={() => setPolicies((prev) => prev.filter((x) => x.id !== p.id))} />
+                  <PolicyCard
+                    key={p.id}
+                    policy={p}
+                    customerId={id}
+                    onDeleted={() => setPolicies((prev) => prev.filter((x) => x.id !== p.id))}
+                    customerName={customer.name}
+                    customerPhone={customer.phone}
+                  />
                 ))}
               </div>
             )}

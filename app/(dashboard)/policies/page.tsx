@@ -18,7 +18,7 @@ const TYPE_LABELS = {
 
 const STATUS_LABELS = {
   active: 'Active',
-  expired: 'Expired',
+  matured: 'Matured',
   lapsed: 'Lapsed',
   pending: 'Pending',
 };
@@ -45,9 +45,8 @@ export default function PoliciesPage() {
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const policyNoMatch = p.policyNo?.toLowerCase().includes(q);
-      const providerMatch = p.provider?.toLowerCase().includes(q);
       const customerMatch = p.customerName?.toLowerCase().includes(q);
-      if (!policyNoMatch && !providerMatch && !customerMatch) return false;
+      if (!policyNoMatch && !customerMatch) return false;
     }
     return true;
   });
@@ -94,7 +93,7 @@ export default function PoliciesPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by policy no, provider, name..."
+            placeholder="Search by policy no or customer name..."
             className="w-full pl-10 pr-10 py-2 bg-slate-900/50 border border-slate-700/50 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all glass"
           />
           {searchQuery && (
@@ -107,13 +106,13 @@ export default function PoliciesPage() {
           )}
         </div>
 
-        <div className="flex flex-wrap gap-3">
-          <div className="flex gap-2">
+        <div className="flex flex-col gap-3 overflow-hidden">
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
             {['all', 'lic', 'health', 'general', 'mutual_fund'].map((t) => (
               <button
                 key={t}
                 onClick={() => setFilterType(t)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
                   filterType === t ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'bg-slate-800 text-slate-400 hover:text-white'
                 }`}
               >
@@ -121,12 +120,12 @@ export default function PoliciesPage() {
               </button>
             ))}
           </div>
-          <div className="flex gap-2">
-            {['all', 'active', 'expired', 'lapsed'].map((s) => (
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
+            {['all', 'active', 'matured', 'lapsed', 'pending'].map((s) => (
               <button
                 key={s}
                 onClick={() => setFilterStatus(s)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
                   filterStatus === s ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20' : 'bg-slate-800 text-slate-400 hover:text-white'
                 }`}
               >

@@ -15,7 +15,6 @@ const NAV_ITEMS = [
   { href: '/customers', label: 'Customers', icon: Users },
   { href: '/policies', label: 'Policies', icon: FileText },
   { href: '/documents', label: 'Documents', icon: Shield },
-  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export default function Sidebar() {
@@ -93,7 +92,7 @@ export default function Sidebar() {
 
       {/* Mobile hamburger */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-slate-900 border border-slate-700 rounded-xl text-slate-400"
+        className="lg:hidden fixed top-3.5 left-3 z-50 p-2 bg-slate-800/80 backdrop-blur-sm border border-slate-700 rounded-xl text-slate-400 hover:text-white transition-colors"
         onClick={() => setMobileOpen(true)}
       >
         <Menu className="w-5 h-5" />

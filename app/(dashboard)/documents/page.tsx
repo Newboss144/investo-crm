@@ -117,7 +117,7 @@ export default function DocumentsPage() {
                 <p className="text-sm font-medium text-white truncate">{doc.fileName}</p>
                 <p className="text-xs text-slate-500">{doc.customerName} · {doc.type.replace('_', ' ').toUpperCase()}</p>
               </div>
-              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
                 <button onClick={() => handleView(doc.fileUrl)}
                   className="px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors cursor-pointer">
                   View

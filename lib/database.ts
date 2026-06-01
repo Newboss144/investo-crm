@@ -22,11 +22,15 @@ export function dbToPolicy(row: any): Policy {
     customerId: row.customer_id,
     type: row.type,
     policyNo: row.policy_no,
-    provider: row.provider,
     premium: Number(row.premium) || 0,
+    sumAssured: Number(row.sum_assured) || 0,
     investmentValue: Number(row.investment_value) || 0,
     status: row.status,
     maturityDate: row.maturity_date || '',
+    doc: row.doc || '',
+    planTerm: row.plan_term || '',
+    modeOfPayment: row.mode_of_payment || 'yearly',
+    isECS: row.is_ecs ?? false,
     createdAt: new Date(row.created_at),
     updatedAt: new Date(row.updated_at),
   };
@@ -144,11 +148,15 @@ export async function createPolicy(
       customer_id: data.customerId,
       type: data.type,
       policy_no: data.policyNo,
-      provider: data.provider,
       premium: data.premium,
-      investment_value: data.investmentValue,
+      sum_assured: data.sumAssured || 0,
+      investment_value: data.investmentValue || 0,
       status: data.status,
       maturity_date: data.maturityDate || null,
+      doc: data.doc || null,
+      plan_term: data.planTerm || null,
+      mode_of_payment: data.modeOfPayment || 'yearly',
+      is_ecs: data.isECS ?? false,
     })
     .select('id')
     .single();
@@ -165,11 +173,15 @@ export async function updatePolicy(
   if (data.customerId !== undefined) payload.customer_id = data.customerId;
   if (data.type !== undefined) payload.type = data.type;
   if (data.policyNo !== undefined) payload.policy_no = data.policyNo;
-  if (data.provider !== undefined) payload.provider = data.provider;
   if (data.premium !== undefined) payload.premium = data.premium;
+  if (data.sumAssured !== undefined) payload.sum_assured = data.sumAssured;
   if (data.investmentValue !== undefined) payload.investment_value = data.investmentValue;
   if (data.status !== undefined) payload.status = data.status;
   if (data.maturityDate !== undefined) payload.maturity_date = data.maturityDate || null;
+  if (data.doc !== undefined) payload.doc = data.doc || null;
+  if (data.planTerm !== undefined) payload.plan_term = data.planTerm || null;
+  if (data.modeOfPayment !== undefined) payload.mode_of_payment = data.modeOfPayment;
+  if (data.isECS !== undefined) payload.is_ecs = data.isECS;
   payload.updated_at = new Date().toISOString();
 
   const { error } = await supabase
@@ -200,7 +212,7 @@ export async function getPoliciesByCustomer(customerId: string): Promise<Policy[
   return (data || []).map(dbToPolicy);
 }
 
-export async function getAllPoliciesForAgent(agentId: string): Promise<(Policy & { customerName: string })[]> {
+export async function getAllPoliciesForAgent(agentId: string): Promise<(Policy & { customerName: string; customerPhone?: string })[]> {
   // Query policies for all customers owned by this agent
   const { data, error } = await supabase
     .from('policies')
@@ -208,6 +220,7 @@ export async function getAllPoliciesForAgent(agentId: string): Promise<(Policy &
       *,
       customers!inner (
         name,
+        phone,
         agent_id
       )
     `)
@@ -218,6 +231,7 @@ export async function getAllPoliciesForAgent(agentId: string): Promise<(Policy &
   return (data || []).map((row: any) => ({
     ...dbToPolicy(row),
     customerName: row.customers?.name || 'Unknown',
+    customerPhone: row.customers?.phone || '',
   }));
 }
 
