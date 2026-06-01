@@ -21,8 +21,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const lastUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
+    // Safety timeout: if auth state doesn't load within 5 seconds, clear the loader
+    const timeoutId = setTimeout(() => {
+      setLoading((prev) => {
+        if (prev) {
+          console.warn('Auth loading timed out. Force-clearing loading state.');
+        }
+        return false;
+      });
+    }, 5000);
+
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      clearTimeout(timeoutId);
       const sessionUser = session?.user;
       setSupabaseUser(sessionUser || null);
 
