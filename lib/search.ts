@@ -35,7 +35,7 @@ export async function searchCustomers(queryText: string, agentId: string) {
 
     if (polError) throw polError;
 
-    const customerHits = (customers || []).map((c) => ({
+    const customerHits = (customers || []).map((c: any) => ({
       document: {
         id: c.id,
         name: c.name,
@@ -55,7 +55,7 @@ export async function searchCustomers(queryText: string, agentId: string) {
 
     // Combine results, removing duplicates
     const combined = [...customerHits];
-    const seenIds = new Set(combined.map((h) => h.document.id));
+    const seenIds = new Set(combined.map((h: any) => h.document.id));
 
     for (const hit of policyHits) {
       if (!seenIds.has(hit.document.id)) {
