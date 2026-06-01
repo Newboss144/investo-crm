@@ -318,7 +318,7 @@ export async function getDashboardStats(agentId: string): Promise<DashboardStats
     .eq('agent_id', agentId);
 
   if (errCustIds) throw errCustIds;
-  const customerIds = (customers || []).map((c) => c.id);
+  const customerIds = (customers || []).map((c: any) => c.id);
 
   if (customerIds.length === 0) {
     return {
